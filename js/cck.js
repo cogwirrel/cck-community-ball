@@ -1,9 +1,11 @@
 var CONFIG = {
-    // This is the url that the community ball site calls to get pledge info etc.
-    API_BASE_URL: "http://dev.ccca2016-auction.com/lite/v1",
+    // These will need to be changed for the event!
+    API_HOST: "dev.ccca2016-auction.com",
+    EVENT_ID: "c80fce30-16cb-11e6-a2df-bc764e08e432",
 
-    // Shamelessly sniffed from requests made by the above site
-    CCK_EVENT_ID: "c80fce30-16cb-11e6-a2df-bc764e08e432",
+    // These probably won't need to change!
+    API_PROTOCOL: "http",
+    API_PATH: "/lite/v1",
 
     // The interval in milliseconds at which to poll pledge info
     POLL_INTERVAL: 1000,
@@ -25,7 +27,7 @@ var CONFIG = {
 // Call the api for the CCK community ball event
 var getForCCKEvent = function(url, data, success, fail) {
     return $.get(
-        CONFIG.API_BASE_URL + "/events/" + CONFIG.CCK_EVENT_ID + url,
+        CONFIG.API_PROTOCOL + "://" + CONFIG.API_HOST + CONFIG.API_PATH + "/events/" + CONFIG.EVENT_ID + url,
         data,
         success,
         fail
