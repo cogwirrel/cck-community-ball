@@ -8,20 +8,19 @@ var CONFIG = {
     API_PATH: "/lite/v1",
 
     // The interval in milliseconds at which to poll pledge info
-    POLL_INTERVAL: 1000,
-
-    // These config options should match the filenames in the img folder
-    IMAGE: {
-        PREFIX: "test_",
-        EXTENSION: ".png",
-        PERCENTAGES_AVAILABLE: [0, 50, 100], // (in ascending order)
-    },
+    POLL_INTERVAL: 300,
 
     // Money values in pounds
     MONEY: {
         TARGET: 506500,
         ALREADY_RAISED: 217532,
     },
+};
+
+// Stuff used for demo version :)
+var DEMO = {
+    isDemo: false,
+    fraction: 0
 };
 
 // Call the api for the CCK community ball event
@@ -39,27 +38,6 @@ var getPledges = function(success, fail) {
     return getForCCKEvent("/pledges", {}, success, fail);
 };
 
-// Return the appropriate image name given a total raised and target
-var selectImage = function(total, target) {
-    // Percentage as integer between 0 and 100
-    var percentage = Math.round(total / target * 100);
-
-    // Find the highest percentage available that's less than or equal to our calculated percentage
-    var imagePercentage = CONFIG.IMAGE.PERCENTAGES_AVAILABLE[0];
-    for(var i = 0; i < CONFIG.IMAGE.PERCENTAGES_AVAILABLE.length; i++) {
-        if(CONFIG.IMAGE.PERCENTAGES_AVAILABLE[i] <= percentage) {
-            imagePercentage = CONFIG.IMAGE.PERCENTAGES_AVAILABLE[i];
-        } else {
-            break;
-        }
-    }
-
-    // Return the image name
-    return CONFIG.IMAGE.PREFIX + String(imagePercentage) + CONFIG.IMAGE.EXTENSION;
-};
-
-var ____percentage = 0;
-
 // Called every POLL_INTERVAL milliseconds
 var poll = function() {
     getPledges(function(data) {
@@ -76,22 +54,42 @@ var poll = function() {
             var totalPounds = totalPence / 100;
             var target = CONFIG.MONEY.TARGET - CONFIG.MONEY.ALREADY_RAISED;
 
-            // Percentage as integer between 0 and 100
-            var percentage = Math.round(totalPounds / target * 100);
+            // Fraction of raised money over target
+            var fraction = totalPounds / target;
 
-            document.getElementById('divisor').style.width = ____percentage++ + "%";
+            // Some code to show off the slidey functionality!
+            if(DEMO.isDemo) {
+                DEMO.fraction += 0.01;
+                if(DEMO.fraction > 1) {
+                    DEMO.fraction = 0;
+                }
+                fraction = DEMO.fraction;
+            }
 
-            // Select the appropriate image given the total and the target
-            //var imageName = selectImage(totalPounds, CONFIG.MONEY.TARGET - CONFIG.MONEY.ALREADY_RAISED);
+            // Modify to be within the bounds of the glowing roof section
+            // Min at about 25% and max at about 92%
+            var cckPercentage = 25 + (92 - 25) * fraction;
 
-            // Update the image with the selected image url
-            //$('#indicator-image').attr('src', "img/" + imageName);
+            // Update the width of the splitter
+            document.getElementById('splitter').style.width = cckPercentage + "%";
         }
     });
 };
 
+var getGetParams = function() {
+    var queryDict = {};
+    location.search.substr(1).split("&").forEach(function(item) {queryDict[item.split("=")[0]] = item.split("=")[1]});
+    return queryDict;
+};
+
 // Our entry point - called on startup
 $(document).ready(function() {
+    // Go into demo mode if required
+    var getParams = getGetParams();
+    if(getParams.hasOwnProperty('demo')) {
+        DEMO.isDemo = true;
+    }
+
     // Kick off the polling
     setInterval(poll, CONFIG.POLL_INTERVAL);
 });
