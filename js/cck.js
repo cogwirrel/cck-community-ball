@@ -58,6 +58,8 @@ var selectImage = function(total, target) {
     return CONFIG.IMAGE.PREFIX + String(imagePercentage) + CONFIG.IMAGE.EXTENSION;
 };
 
+var ____percentage = 0;
+
 // Called every POLL_INTERVAL milliseconds
 var poll = function() {
     getPledges(function(data) {
@@ -72,12 +74,18 @@ var poll = function() {
 
             // Calculate the total raised in pounds as the values from the api are in pence
             var totalPounds = totalPence / 100;
+            var target = CONFIG.MONEY.TARGET - CONFIG.MONEY.ALREADY_RAISED;
+
+            // Percentage as integer between 0 and 100
+            var percentage = Math.round(totalPounds / target * 100);
+
+            document.getElementById('divisor').style.width = ____percentage++ + "%";
 
             // Select the appropriate image given the total and the target
-            var imageName = selectImage(totalPounds, CONFIG.MONEY.TARGET - CONFIG.MONEY.ALREADY_RAISED);
+            //var imageName = selectImage(totalPounds, CONFIG.MONEY.TARGET - CONFIG.MONEY.ALREADY_RAISED);
 
             // Update the image with the selected image url
-            $('#indicator-image').attr('src', "img/" + imageName);
+            //$('#indicator-image').attr('src', "img/" + imageName);
         }
     });
 };
