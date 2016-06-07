@@ -138,6 +138,9 @@ $(document).ready(function() {
         document.addEventListener('MSFullscreenChange', fullScreenListener, false);
     }
 
+    // This lets us use CORS for the pledges api in stricter browsers
+    $.ajaxSetup({ xhrFields: { withCredentials: false } });
+
     // Kick off the polling
     setInterval(poll, CONFIG.POLL_INTERVAL);
 });
