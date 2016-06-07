@@ -1,7 +1,19 @@
 var CONFIG = {
-    // These will need to be changed for the event!
+    // Apparently on the day of the event the API_HOST will be: "10.10.10.254"
+    //API_HOST: "10.10.10.254",
     API_HOST: "dev.ccca2016-auction.com",
+
+    // The Event ID will need to be changed to the one provided on the day
     EVENT_ID: "c80fce30-16cb-11e6-a2df-bc764e08e432",
+
+    // Money values in pounds - tweak these as decided by Adele
+    MONEY: {
+        TARGET: 506500,
+        ALREADY_RAISED: 217532,
+    },
+
+    // The image width in pixels
+    IMAGE_WIDTH: 1000,
 
     // These probably won't need to change!
     API_PROTOCOL: "http",
@@ -9,12 +21,6 @@ var CONFIG = {
 
     // The interval in milliseconds at which to poll pledge info
     POLL_INTERVAL: 300,
-
-    // Money values in pounds
-    MONEY: {
-        TARGET: 506500,
-        ALREADY_RAISED: 217532,
-    },
 };
 
 // Stuff used for demo version :)
@@ -110,6 +116,7 @@ var fullScreenListener = function()
     }
 }
 
+// Shamelessly copy/pasted from stackoverflow
 var getGetParams = function() {
     var queryDict = {};
     location.search.substr(1).split("&").forEach(function(item) {queryDict[item.split("=")[0]] = item.split("=")[1]});
@@ -137,6 +144,10 @@ $(document).ready(function() {
         document.addEventListener('fullscreenchange', fullScreenListener, false);
         document.addEventListener('MSFullscreenChange', fullScreenListener, false);
     }
+
+    // Set the image width:
+    $('.the-container').css('width', CONFIG.IMAGE_WIDTH + "px");
+    $('.image-slider img').css('max-width', CONFIG.IMAGE_WIDTH + "px");
 
     // This lets us use CORS for the pledges api in stricter browsers
     $.ajaxSetup({ xhrFields: { withCredentials: false } });
