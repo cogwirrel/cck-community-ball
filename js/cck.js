@@ -20,6 +20,7 @@ var CONFIG = {
 // Stuff used for demo version :)
 var DEMO = {
     isDemo: false,
+    isFixed: false,
     fraction: 0
 };
 
@@ -59,11 +60,15 @@ var poll = function() {
 
             // Some code to show off the slidey functionality!
             if(DEMO.isDemo) {
-                DEMO.fraction += 0.01;
-                if(DEMO.fraction > 1) {
-                    DEMO.fraction = 0;
+                if(DEMO.isFixed) {
+                    fraction = DEMO.fraction;
+                } else {
+                    DEMO.fraction += 0.01;
+                    if(DEMO.fraction > 1) {
+                        DEMO.fraction = 0;
+                    }
+                    fraction = DEMO.fraction;
                 }
-                fraction = DEMO.fraction;
             }
 
             // Modify to be within the bounds of the glowing roof section
@@ -86,6 +91,11 @@ var getGetParams = function() {
 $(document).ready(function() {
     // Go into demo mode if required
     var getParams = getGetParams();
+    if(getParams.hasOwnProperty('p')) {
+        DEMO.fraction = Number(getParams['p']) / 100;
+        DEMO.isDemo = true;
+        DEMO.isFixed = true;
+    }
     if(getParams.hasOwnProperty('demo')) {
         DEMO.isDemo = true;
     }
