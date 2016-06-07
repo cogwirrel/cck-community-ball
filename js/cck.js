@@ -81,6 +81,35 @@ var poll = function() {
     });
 };
 
+var goFullScreen = function() {
+    if ((document.fullScreenElement && document.fullScreenElement !== null) ||    
+        (!document.mozFullScreen && !document.webkitIsFullScreen)) {
+        // Go full screen
+        if (document.documentElement.requestFullScreen) {
+            document.documentElement.requestFullScreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+            document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullScreen) {
+            document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+    }
+};
+
+var fullScreenListener = function()
+{
+    if ((document.fullScreenElement && document.fullScreenElement !== null) ||    
+        (!document.mozFullScreen && !document.webkitIsFullScreen))
+    {
+        // We are exiting full screen
+        $('.full-screen-button').show();
+    }
+    else
+    {
+        // We are entering full screen
+        $('.full-screen-button').hide();
+    }
+}
+
 var getGetParams = function() {
     var queryDict = {};
     location.search.substr(1).split("&").forEach(function(item) {queryDict[item.split("=")[0]] = item.split("=")[1]});
@@ -98,6 +127,15 @@ $(document).ready(function() {
     }
     if(getParams.hasOwnProperty('demo')) {
         DEMO.isDemo = true;
+    }
+
+    // Register the listener for full screen changes
+    if (document.addEventListener)
+    {
+        document.addEventListener('webkitfullscreenchange', fullScreenListener, false);
+        document.addEventListener('mozfullscreenchange', fullScreenListener, false);
+        document.addEventListener('fullscreenchange', fullScreenListener, false);
+        document.addEventListener('MSFullscreenChange', fullScreenListener, false);
     }
 
     // Kick off the polling
